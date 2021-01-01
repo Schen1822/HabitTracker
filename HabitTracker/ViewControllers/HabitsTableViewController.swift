@@ -9,6 +9,7 @@ import UIKit
 
 class HabitsTableViewController: UITableViewController {
     var habits = [String]()
+    var habitPages = [String: CalendarViewController]()
     var newHabit:String = ""
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,8 +46,9 @@ class HabitsTableViewController: UITableViewController {
         let habitDetailVC = segue.source as! HabitDetailViewController
         newHabit = habitDetailVC.name
         habits.append(newHabit)
+        let newPage:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
+        habitPages[newHabit] = newPage
         tableView.reloadData()
-        
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -54,7 +56,7 @@ class HabitsTableViewController: UITableViewController {
         let newCalendarController = CalendarViewController()
         self.navigationController?.pushViewController(newCalendarController, animated: true)
         */
-        let next:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
+        let next: CalendarViewController = habitPages[habits[indexPath.row]]!
         self.navigationController?.pushViewController(next, animated:true)
     }
 
