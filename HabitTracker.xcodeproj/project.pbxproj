@@ -15,6 +15,7 @@
 		ADC0DB32259E4C2B00AA67C3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADC0DB30259E4C2B00AA67C3 /* LaunchScreen.storyboard */; };
 		ADC0DB4B259EC4BD00AA67C3 /* HabitsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC0DB4A259EC4BD00AA67C3 /* HabitsTableViewController.swift */; };
 		ADC0DB52259ECE0100AA67C3 /* HabitDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC0DB51259ECE0100AA67C3 /* HabitDetailViewController.swift */; };
+		ADC0DB5925A12C0B00AA67C3 /* extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC0DB5825A12C0B00AA67C3 /* extension.swift */; };
 		C5C649F0E8CA4E8201F56424 /* Pods_HabitTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B05CC78DB4EE64978BE864 /* Pods_HabitTracker.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		ADC0DB33259E4C2B00AA67C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADC0DB4A259EC4BD00AA67C3 /* HabitsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsTableViewController.swift; sourceTree = "<group>"; };
 		ADC0DB51259ECE0100AA67C3 /* HabitDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailViewController.swift; sourceTree = "<group>"; };
+		ADC0DB5825A12C0B00AA67C3 /* extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extension.swift; sourceTree = "<group>"; };
 		F6B05CC78DB4EE64978BE864 /* Pods_HabitTracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HabitTracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -86,6 +88,7 @@
 			children = (
 				ADC0DB56259F97AB00AA67C3 /* ViewControllers */,
 				ADC0DB25259E4C2800AA67C3 /* AppDelegate.swift */,
+				ADC0DB5825A12C0B00AA67C3 /* extension.swift */,
 				ADC0DB27259E4C2800AA67C3 /* SceneDelegate.swift */,
 				ADC0DB2B259E4C2800AA67C3 /* Main.storyboard */,
 				ADC0DB2E259E4C2B00AA67C3 /* Assets.xcassets */,
@@ -222,6 +225,7 @@
 				ADC0DB4B259EC4BD00AA67C3 /* HabitsTableViewController.swift in Sources */,
 				ADC0DB52259ECE0100AA67C3 /* HabitDetailViewController.swift in Sources */,
 				ADC0DB2A259E4C2800AA67C3 /* ViewController.swift in Sources */,
+				ADC0DB5925A12C0B00AA67C3 /* extension.swift in Sources */,
 				ADC0DB26259E4C2800AA67C3 /* AppDelegate.swift in Sources */,
 				ADC0DB28259E4C2800AA67C3 /* SceneDelegate.swift in Sources */,
 			);

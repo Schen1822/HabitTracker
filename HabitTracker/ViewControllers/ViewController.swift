@@ -14,6 +14,15 @@ class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDa
     @IBOutlet var counter: UILabel!
     
     var count = 0
+    
+    init(title:String?) {
+        super.init(nibName: nil, bundle: nil)
+        self.title = title
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +30,7 @@ class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDa
         if calendar == nil {
             print("poop")
         } else {
+            self.navigationItem.title = self.title
             calendar.delegate = self
             calendar.allowsMultipleSelection = true
             calendar.today = nil
@@ -54,14 +64,10 @@ class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDa
             return false
         }
     }
-    /*/
-    func calendar(_ calendar:FSCalendar, imageFor date: Date) -> UIImage? {
-        
-    }*/
     static func isToday(selected date: Date) -> Bool {
         let today = Date()
-        var todayComponents = Calendar.current.dateComponents([Calendar.Component.month, Calendar.Component.year, Calendar.Component.day], from: today)
-        var selectedComponents = Calendar.current.dateComponents([Calendar.Component.month, Calendar.Component.year, Calendar.Component.day], from: date)
+        let todayComponents = Calendar.current.dateComponents([Calendar.Component.month, Calendar.Component.year, Calendar.Component.day], from: today)
+        let selectedComponents = Calendar.current.dateComponents([Calendar.Component.month, Calendar.Component.year, Calendar.Component.day], from: date)
         if (todayComponents.month! == selectedComponents.month!
                 && todayComponents.day! == selectedComponents.day!
                 && todayComponents.year! == selectedComponents.year!) {
@@ -69,8 +75,5 @@ class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDa
         }
         return false
     }
-
-
-
 }
 

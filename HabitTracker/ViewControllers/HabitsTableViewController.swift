@@ -11,9 +11,13 @@ class HabitsTableViewController: UITableViewController {
     var habits = [String]()
     var habitPages = [String: CalendarViewController]()
     var newHabit:String = ""
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.leftBarButtonItem = self.editButtonItem
+        self.view.backgroundColor = UIColor(red: 175.0/255.0, green: 150/255.0, blue: 100.0/255.0, alpha: 1)
         // Uncomment the following line to preserve selection between presentations
         //self.clearsSelectionOnViewWillAppear = false
 
@@ -38,6 +42,11 @@ class HabitsTableViewController: UITableViewController {
         cell.textLabel?.text = habits[indexPath.row]
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.contentView.backgroundColor = UIColor(red: 175.0/255.0, green: 150/255.0, blue: 100.0/255.0, alpha: 1)
+    }
+    
     @IBAction func cancel(segue:UIStoryboardSegue) {
         
     }
@@ -47,6 +56,7 @@ class HabitsTableViewController: UITableViewController {
         newHabit = habitDetailVC.name
         habits.append(newHabit)
         let newPage:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
+        newPage.title = newHabit
         habitPages[newHabit] = newPage
         tableView.reloadData()
     }
