@@ -49,12 +49,12 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
             calendar.today = nil
             counter.center = self.view.center
             counter.textAlignment = .center
-            initCounter()
+            getCounter()
             initEntry()
         }
     }
     
-    func initCounter() {
+    func getCounter() {
         let currentPageDate = calendar.currentPage
         let currMonth = Calendar.current.component(.month, from: currentPageDate)
         let currYear = Calendar.current.component(.year, from: currentPageDate)
@@ -70,10 +70,7 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
     }
     
     func didEndDecelerating(calendar: FSCalendar) {
-        let currentPageDate = calendar.currentPage
-        let currMonth = Calendar.current.component(.month, from: currentPageDate)
-        let currYear = Calendar.current.component(.year, from: currentPageDate)
-        counter.text = String(HabitsTableViewController.db.get(month: currMonth, year: currYear, from: self.title!))
+        getCounter()
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
