@@ -8,7 +8,21 @@
 import UIKit
 import FSCalendar
 
-class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
+extension FSCalendar: UIScrollViewDelegate {
+public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    (delegate as? ExtendedFSCalendarDelegate)?.didEndDecelerating(calendar: self)
+    }
+}
+
+protocol ExtendedFSCalendarDelegate: FSCalendarDelegate {
+    func didEndDecelerating(calendar: FSCalendar)
+}
+
+extension ExtendedFSCalendarDelegate {
+    func didEndDecelerating(calendar: FSCalendar) { }
+}
+
+class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCalendarDataSource {
 
     @IBOutlet var calendar: FSCalendar!
     @IBOutlet var counter: UILabel!
@@ -35,9 +49,16 @@ class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDa
             calendar.today = nil
             counter.center = self.view.center
             counter.textAlignment = .center
-            counter.text = String(count)
+            initCounter()
             initEntry()
         }
+    }
+    
+    func initCounter() {
+        let currentPageDate = calendar.currentPage
+        let currMonth = Calendar.current.component(.month, from: currentPageDate)
+        let currYear = Calendar.current.component(.year, from: currentPageDate)
+        counter.text = String(HabitsTableViewController.db.get(month: currMonth, year: currYear, from: self.title!))
     }
     
     func initEntry() {
@@ -46,6 +67,13 @@ class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDa
         if HabitsTableViewController.db.inTable(month: todayComponents.month!, year: todayComponents.year!, from: self.title!) == false {
             HabitsTableViewController.db.insert(month: todayComponents.month!, year: todayComponents.year!, count: 0, into: self.title!)
         }
+    }
+    
+    func didEndDecelerating(calendar: FSCalendar) {
+        let currentPageDate = calendar.currentPage
+        let currMonth = Calendar.current.component(.month, from: currentPageDate)
+        let currYear = Calendar.current.component(.year, from: currentPageDate)
+        counter.text = String(HabitsTableViewController.db.get(month: currMonth, year: currYear, from: self.title!))
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
@@ -62,13 +90,11 @@ class CalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDa
         counter.text = String(count)
     }
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
-        return true
-        /*
         if CalendarViewController.isToday(selected: date) {
             return true
         } else {
             return false
-        }*/
+        }
     }
     func calendar(_ calendar: FSCalendar, shouldDeselect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
         if CalendarViewController.isToday(selected: date) {

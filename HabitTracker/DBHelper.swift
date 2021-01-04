@@ -29,7 +29,7 @@ class DBHelper {
     }
     
     func createTable(named name:String) {
-        let createTableString = "CREATE TABLE IF NOT EXISTS " + name + "(month INTEGER,year INTEGER,count INTEGER);"
+        let createTableString = "CREATE TABLE IF NOT EXISTS '\(name)'(month INTEGER,year INTEGER,count INTEGER);"
         var createTableStatement: OpaquePointer? = nil
         if sqlite3_prepare_v2(db, createTableString, -1, &createTableStatement, nil) == SQLITE_OK {
             if sqlite3_step(createTableStatement) == SQLITE_DONE {
@@ -44,7 +44,7 @@ class DBHelper {
     }
     
     func read(from table:String) -> [HabitDate:Int] {
-        let queryStatementString = "SELECT * FROM " + table + ";"
+        let queryStatementString = "SELECT * FROM '\(table)';"
         var queryStatement: OpaquePointer? = nil
         var dict:[HabitDate:Int] = [:]
         if sqlite3_prepare_v2(db, queryStatementString, -1, &queryStatement, nil) == SQLITE_OK {
@@ -68,7 +68,7 @@ class DBHelper {
         if habits[date] != nil {
             return
         } else {
-            let insertStatementString = "INSERT INTO " + table + " VALUES (?, ?, ?);"
+            let insertStatementString = "INSERT INTO '\(table)' VALUES (?, ?, ?);"
             var insertStatement: OpaquePointer? = nil
             if sqlite3_prepare_v2(db, insertStatementString, -1, &insertStatement, nil) == SQLITE_OK {
                 sqlite3_bind_int(insertStatement, 1, Int32(month))
@@ -108,7 +108,7 @@ class DBHelper {
     
     func update(month: Int, year: Int, count: Int, into table: String) {
         //let updateStatementString = "UPDATE \(table) SET count = \(count) WHERE month = \(month) AND year = \(year);"
-        let updateStatementString = "UPDATE \(table) SET count = \(count) WHERE month = \(month) AND year = \(year);"
+        let updateStatementString = "UPDATE '\(table)' SET count = \(count) WHERE month = \(month) AND year = \(year);"
         var updateStatement: OpaquePointer? = nil
         if sqlite3_prepare_v2(db, updateStatementString, -1, &updateStatement, nil) == SQLITE_OK {
             if sqlite3_step(updateStatement) == SQLITE_DONE {
@@ -123,7 +123,7 @@ class DBHelper {
     }
     
     func deleteTable(_ table: String) {
-        let deleteStatementString = "DROP TABLE IF EXISTS \(table)"
+        let deleteStatementString = "DROP TABLE IF EXISTS '\(table)'"
         var deleteStatement: OpaquePointer? = nil
         if sqlite3_prepare_v2(db, deleteStatementString, -1, &deleteStatement, nil) == SQLITE_OK {
             if sqlite3_step(deleteStatement) == SQLITE_DONE {
