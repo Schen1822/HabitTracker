@@ -10,14 +10,14 @@ import SQLite3
 
 class DBHelper {
     init() {
-        
+        db = openDatabase()
     }
     
     let dbPath: String = "countsDB.sqlite3"
     var db: OpaquePointer?
     
     func openDatabase() -> OpaquePointer? {
-        let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent(dbPath)
+        let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent(dbPath)
         var db: OpaquePointer? = nil
         if sqlite3_open(fileURL.path, &db) != SQLITE_OK {
             print("error opening database")
@@ -29,7 +29,7 @@ class DBHelper {
     }
     
     func createTable(named name:String) {
-        let createTableString = "CREATE TABLE IF NOT EXISTS " + name + "(month INTEGER, year INTEGER, counts INTEGER);"
+        let createTableString = "CREATE TABLE IF NOT EXISTS " + name + "(month INTEGER,year INTEGER,count INTEGER);"
         var createTableStatement: OpaquePointer? = nil
         if sqlite3_prepare_v2(db, createTableString, -1, &createTableStatement, nil) == SQLITE_OK {
             if sqlite3_step(createTableStatement) == SQLITE_DONE {
@@ -68,7 +68,7 @@ class DBHelper {
         if habits[date] != nil {
             return
         } else {
-            let insertStatementString = "INSERT INTO " + table + " person (month, year, count) VALUES (?, ?, ?);"
+            let insertStatementString = "INSERT INTO " + table + " VALUES (?, ?, ?);"
             var insertStatement: OpaquePointer? = nil
             if sqlite3_prepare_v2(db, insertStatementString, -1, &insertStatement, nil) == SQLITE_OK {
                 sqlite3_bind_int(insertStatement, 1, Int32(month))
@@ -96,8 +96,19 @@ class DBHelper {
         }
     }
     
-    func update(month: Int, year: Int, count: Int, in table: String) {
-        let updateStatementString = "UPDATE \(table) SET count = \(count) + WHERE month = \(month) + AND year = \(year);"
+    func inTable(month: Int, year: Int, from table: String)-> Bool {
+        let habits = read(from: table)
+        let date = HabitDate(month: month, year: year)
+        if habits[date] != nil {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func update(month: Int, year: Int, count: Int, into table: String) {
+        //let updateStatementString = "UPDATE \(table) SET count = \(count) WHERE month = \(month) AND year = \(year);"
+        let updateStatementString = "UPDATE \(table) SET count = \(count) WHERE month = \(month) AND year = \(year);"
         var updateStatement: OpaquePointer? = nil
         if sqlite3_prepare_v2(db, updateStatementString, -1, &updateStatement, nil) == SQLITE_OK {
             if sqlite3_step(updateStatement) == SQLITE_DONE {

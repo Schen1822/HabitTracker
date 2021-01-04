@@ -11,8 +11,7 @@ class HabitsTableViewController: UITableViewController {
     var habits = [String]()
     var habitPages = [String: CalendarViewController]()
     var newHabit:String = ""
-    
-    
+    static var db:DBHelper = DBHelper()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +57,7 @@ class HabitsTableViewController: UITableViewController {
         let newPage:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
         newPage.title = newHabit
         habitPages[newHabit] = newPage
+        HabitsTableViewController.db.createTable(named:newHabit)
         tableView.reloadData()
     }
 
@@ -68,6 +68,7 @@ class HabitsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            HabitsTableViewController.db.deleteTable(habits[indexPath.row])
             self.habits.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
         }

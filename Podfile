@@ -8,5 +8,6 @@ target 'HabitTracker' do
   # Pods for HabitTracker
 
 pod 'FSCalendar'
+pod 'SQLite.swift'
 
 end
