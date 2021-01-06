@@ -46,13 +46,6 @@ class HabitsTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath)
         cell.textLabel?.text = habits[indexPath.row]
         cell.contentView.backgroundColor = UIColor(red: 120.0/255.0, green: 100/255.0, blue: 66.0/255.0, alpha: 1)
-        if habitPages[habits[indexPath.row]] == nil {
-            let newPage:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
-            newPage.title = newHabit
-            let newHabit = habits[indexPath.row]
-            habitPages[newHabit] = newPage
-            //HabitsTableViewController.db.createTable(named:newHabit)
-        }
         return cell
     }
     
@@ -78,6 +71,14 @@ class HabitsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if habitPages[habits[indexPath.row]] == nil {
+            print("this thing: " + habits[indexPath.row])
+            let newPage:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
+            let newHabit = habits[indexPath.row]
+            newPage.title = newHabit
+            habitPages[newHabit] = newPage
+            //HabitsTableViewController.db.createTable(named:newHabit)
+        }
         let next: CalendarViewController = habitPages[habits[indexPath.row]]!
         self.navigationController?.pushViewController(next, animated:true)
     }
@@ -86,6 +87,7 @@ class HabitsTableViewController: UITableViewController {
         if editingStyle == .delete {
             HabitsTableViewController.db.deleteTable(habits[indexPath.row])
             self.habits.remove(at: indexPath.row)
+            persistTable.set(habits, forKey: "table")
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
