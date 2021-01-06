@@ -8,6 +8,7 @@
 import UIKit
 
 class HabitsTableViewController: UITableViewController {
+    let persistTable = UserDefaults.standard
     var habits = [String]()
     var habitPages = [String: CalendarViewController]()
     var newHabit:String = ""
@@ -17,6 +18,12 @@ class HabitsTableViewController: UITableViewController {
         super.viewDidLoad()
         self.navigationItem.leftBarButtonItem = self.editButtonItem
         self.view.backgroundColor = UIColor(red: 175.0/255.0, green: 150/255.0, blue: 100.0/255.0, alpha: 1)
+        let persistedHabits = persistTable.stringArray(forKey: "table")
+        if  persistedHabits != nil {
+            print("gotteem")
+            habits = persistedHabits!
+        }
+        
         // Uncomment the following line to preserve selection between presentations
         //self.clearsSelectionOnViewWillAppear = false
 
@@ -39,6 +46,13 @@ class HabitsTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "habitCell", for: indexPath)
         cell.textLabel?.text = habits[indexPath.row]
         cell.contentView.backgroundColor = UIColor(red: 120.0/255.0, green: 100/255.0, blue: 66.0/255.0, alpha: 1)
+        if habitPages[habits[indexPath.row]] == nil {
+            let newPage:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
+            newPage.title = newHabit
+            let newHabit = habits[indexPath.row]
+            habitPages[newHabit] = newPage
+            //HabitsTableViewController.db.createTable(named:newHabit)
+        }
         return cell
     }
     
@@ -54,6 +68,8 @@ class HabitsTableViewController: UITableViewController {
         let habitDetailVC = segue.source as! HabitDetailViewController
         newHabit = habitDetailVC.name
         habits.append(newHabit)
+        persistTable.set(habits, forKey: "table")
+        print("persisted")
         let newPage:CalendarViewController = self.storyboard?.instantiateViewController(withIdentifier:"CalendarViewController") as! CalendarViewController
         newPage.title = newHabit
         habitPages[newHabit] = newPage

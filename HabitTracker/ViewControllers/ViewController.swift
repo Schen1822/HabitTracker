@@ -27,7 +27,7 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
     @IBOutlet var calendar: FSCalendar!
     @IBOutlet var counter: UILabel!
     
-    var count = 0
+    var count: Int = 0
     
     init(title:String?) {
         super.init(nibName: nil, bundle: nil)
@@ -44,6 +44,12 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
             print("poop")
         } else {
             self.navigationItem.title = self.title
+            self.view.backgroundColor = UIColor(red: 175.0/255.0, green: 150/255.0, blue: 100.0/255.0, alpha: 1)
+            calendar.backgroundColor = UIColor(red: 226.0/255.0, green: 214/255.0, blue: 191/255.0, alpha: 1)
+            calendar.appearance.headerTitleColor = UIColor(red: 120.0/255.0, green: 100/255.0, blue: 66.0/255.0, alpha: 1)
+            calendar.appearance.weekdayTextColor = UIColor(red: 57/255.0, green: 42/255.0, blue: 19/255.0, alpha: 1)
+            calendar.appearance.titleDefaultColor = UIColor(red: 57/255.0, green: 42/255.0, blue: 19/255.0, alpha: 1)
+            calendar.appearance.selectionColor = UIColor(red: 57/255.0, green: 42/255.0, blue: 19/255.0, alpha: 1)
             calendar.delegate = self
             calendar.allowsMultipleSelection = true
             calendar.today = nil
@@ -58,7 +64,9 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
         let currentPageDate = calendar.currentPage
         let currMonth = Calendar.current.component(.month, from: currentPageDate)
         let currYear = Calendar.current.component(.year, from: currentPageDate)
-        counter.text = String(HabitsTableViewController.db.get(month: currMonth, year: currYear, from: self.title!))
+        count = HabitsTableViewController.db.get(month: currMonth, year: currYear, from: self.title!)
+        print(count)
+        counter.text = String(count)
     }
     
     func initEntry() {
@@ -74,32 +82,42 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        count += 1
         let selected = CalendarViewController.unpack(date: date)
-        HabitsTableViewController.db.update(month: selected.month!, year: selected.year!, count: count, into: self.title!)
+        let currMonth = Calendar.current.component(.month, from: calendar.currentPage)
+        let selectedCount = HabitsTableViewController.db.get(month: selected.month!, year: selected.year!, from: self.title!) + 1
+        HabitsTableViewController.db.update(month: selected.month!, year: selected.year!, count: selectedCount, into: self.title!)
+        if currMonth == selected.month {
+            count = selectedCount
+        }
         counter.text = String(count)
     }
     
     func calendar(_ calendar: FSCalendar, didDeselect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        count -= 1
         let deselected = CalendarViewController.unpack(date: date)
-        HabitsTableViewController.db.update(month: deselected.month!, year: deselected.year!, count: count, into: self.title!)
+        let currMonth = Calendar.current.component(.month, from: calendar.currentPage)
+        let deselectedCount = HabitsTableViewController.db.get(month: deselected.month!, year: deselected.year!, from: self.title!) - 1
+        HabitsTableViewController.db.update(month: deselected.month!, year: deselected.year!, count: deselectedCount, into: self.title!)
+        if currMonth == deselected.month {
+            count = deselectedCount
+        }
         counter.text = String(count)
     }
+    
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
-        if CalendarViewController.isToday(selected: date) {
+        if CalendarViewController.isSelectable(date: date) {
             return true
         } else {
             return false
         }
     }
     func calendar(_ calendar: FSCalendar, shouldDeselect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
-        if CalendarViewController.isToday(selected: date) {
+        if CalendarViewController.isSelectable(date: date) {
             return true
         } else {
             return false
         }
     }
+    
     static func isToday(selected date: Date) -> Bool {
         let today = Date()
         let todayComponents = Calendar.current.dateComponents([Calendar.Component.month, Calendar.Component.year, Calendar.Component.day], from: today)
@@ -107,6 +125,20 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
         if (todayComponents.month! == selectedComponents.month!
                 && todayComponents.day! == selectedComponents.day!
                 && todayComponents.year! == selectedComponents.year!) {
+            return true
+        }
+        return false
+    }
+    
+    static func isSelectable(date: Date) -> Bool {
+        let today = Date()
+        let todayComponents = Calendar.current.dateComponents([Calendar.Component.month, Calendar.Component.year, Calendar.Component.day], from: today)
+        let selectedComponents = Calendar.current.dateComponents([Calendar.Component.month, Calendar.Component.year, Calendar.Component.day], from: date)
+        let linearDates = todayComponents.month! >= selectedComponents.month!
+            && todayComponents.day! >= selectedComponents.day!
+            && todayComponents.year! >= selectedComponents.year!
+        let newYear = todayComponents.year! > selectedComponents.year!
+        if (linearDates || newYear) {
             return true
         }
         return false
