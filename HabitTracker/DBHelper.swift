@@ -92,6 +92,7 @@ class DBHelper {
         if habits[date] != nil {
             return habits[date]!
         } else {
+            insert(month: month, year: year, count: 0, into: table)
             return 0
         }
     }
