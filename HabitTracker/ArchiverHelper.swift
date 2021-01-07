@@ -12,6 +12,9 @@ class ArchiverHelper {
     
     func loadData() -> Bool {
         let data = UserDefaults.standard.value(forKey: "persistedDict")
+        if data == nil {
+            return false
+        }
         do {
             let unarchived = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data as! Data) as! [String:[Date]]
             HabitsTableViewController.datesDict.habitDates = unarchived
