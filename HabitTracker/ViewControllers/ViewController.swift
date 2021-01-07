@@ -28,15 +28,18 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
     @IBOutlet var counter: UILabel!
     
     var count: Int = 0
+    var dates: [Date] = []
     
     init(title:String?) {
         super.init(nibName: nil, bundle: nil)
         self.title = title
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+    
+    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("dataStuff")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +59,23 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
             counter.center = self.view.center
             counter.textAlignment = .center
             getCounter()
+            initDates()
             initEntry()
+        }
+    }
+
+    func initDates() {
+        if HabitsTableViewController.datesDict.habitDates[self.title!] != nil {
+            print("exist")
+            self.dates = HabitsTableViewController.datesDict.habitDates[self.title!]!
+            print(self.dates)
+            for date in self.dates {
+                print(date)
+                calendar.select(date)
+            }
+        } else {
+            print("don't exist")
+            HabitsTableViewController.datesDict.habitDates[self.title!] = self.dates
         }
     }
     
@@ -90,6 +109,10 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
             count = selectedCount
         }
         counter.text = String(count)
+        //PERSIST
+        dates.append(date)
+        HabitsTableViewController.datesDict.habitDates[self.title!] = dates
+        HabitsTableViewController.archiver.saveData()
     }
     
     func calendar(_ calendar: FSCalendar, didDeselect date: Date, at monthPosition: FSCalendarMonthPosition) {
@@ -101,6 +124,9 @@ class CalendarViewController: UIViewController, ExtendedFSCalendarDelegate, FSCa
             count = deselectedCount
         }
         counter.text = String(count)
+        dates = dates.filter() { $0 != date}
+        HabitsTableViewController.datesDict.habitDates[self.title!] = dates
+        HabitsTableViewController.archiver.saveData()
     }
     
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {

@@ -13,6 +13,8 @@ class HabitsTableViewController: UITableViewController {
     var habitPages = [String: CalendarViewController]()
     var newHabit:String = ""
     static var db:DBHelper = DBHelper()
+    static var datesDict = CalendarMeta.sharedInstance
+    static var archiver:ArchiverHelper = ArchiverHelper()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +25,7 @@ class HabitsTableViewController: UITableViewController {
             print("gotteem")
             habits = persistedHabits!
         }
-        
+        HabitsTableViewController.archiver.loadData()
         // Uncomment the following line to preserve selection between presentations
         //self.clearsSelectionOnViewWillAppear = false
 
@@ -86,6 +88,8 @@ class HabitsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             HabitsTableViewController.db.deleteTable(habits[indexPath.row])
+            HabitsTableViewController.datesDict.habitDates.removeValue(forKey: habits[indexPath.row])
+            HabitsTableViewController.archiver.saveData()
             self.habits.remove(at: indexPath.row)
             persistTable.set(habits, forKey: "table")
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
